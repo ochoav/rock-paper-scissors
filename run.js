@@ -45,7 +45,13 @@ function resetGame() {
     result.textContent = "Choose your move!";
 
     playerScore = computerScore = 0;
-    game();
+    
+    document.querySelectorAll('button').forEach((btn) => {
+        btn.disabled = false;
+    });
+
+    const resetBtn = document.getElementById('reset');
+    document.body.removeChild(resetBtn);
 }
 
 function playRound(playerSelection) {
@@ -59,7 +65,7 @@ function playRound(playerSelection) {
         (playerSelection == "scissors" && computerSelection == "paper")) {
         result.textContent = "You win! ";
         playerScore++;
-        }
+    }
     else if(playerSelection == computerSelection) {
         result.textContent = "It's a tie! ";
     }
@@ -80,11 +86,6 @@ function game() {
             playRound(btn.id);
         })
     });
-
-    const resetBtn = document.getElementById('reset');
-    if (resetBtn) {
-        document.body.removeChild(resetBtn);
-    }
 }
 
 game();
