@@ -1,37 +1,90 @@
+let computerScore = 0;
+let playerScore = 0;
+
 function computerPlay() {
-    let n = Math.random()
+    let n = Math.random();
 
     if(n > 0.66)
-        return "Rock"
+        return "Rock";
     else if(n > 0.33)
-        return "Scissors"
+        return "Scissors";
     else
-        return "Paper"
+        return "Paper";
 }
 
-function playRound(playerSelection, computerSelection) {
-    playerSelection = playerSelection.toLowerCase()
-    computerSelection = computerSelection.toLowerCase();
+function updateScore() {
+    const score = document.getElementById('score');
+    score.textContent = `Player: ${playerScore} Computer: ${computerScore}`;
 
-    if((playerSelection == "rock" && computerSelection == "scissors") ||
-        (playerSelection == "paper" && computerSelection == "rock") ||
-        (playerSelection == "scissors" && computerSelection == "paper")) 
-        return "You win! " + playerSelection + " beats " + computerSelection + "!"
-    else if(playerSelection == computerSelection)
-        return "It's a tie"
-    else
-        return "You lose! " + computerSelection + " beats " + playerSelection + "!"
-   
-}
-
-function game() {
-    for(let i = 0; i < 5; i++) {
-        let player = prompt("What's your move?")
-        console.log("Player chose: " + player)
-        let comp = computerPlay()
-        console.log("Computer chose: " + comp)
-        console.log(playRound(player, comp))
+    if (playerScore == 5 || computerScore == 5) {
+        result.textContent = playerScore == 5 ? "Player " : "Computer ";
+        result.textContent += "wins the game!"
+        stopPlay();
     }
 }
 
-game()
+function stopPlay() {
+    document.querySelectorAll('button').forEach((btn) => {
+        btn.disabled = true;
+    });
+
+    const resetBtn = document.createElement('button');
+    resetBtn.id = "reset";
+    resetBtn.textContent = "Reset";
+    const body = document.body;
+    body.appendChild(resetBtn);
+
+    resetBtn.addEventListener('click', resetGame);
+}
+
+function resetGame() {
+    const score = document.getElementById('score');
+    score.textContent = `Player: 0 Computer: 0`;
+    
+    const result = document.getElementById('result');
+    result.textContent = "Choose your move!";
+
+    playerScore = computerScore = 0;
+    game();
+}
+
+function playRound(playerSelection) {
+    playerSelection = playerSelection.toLowerCase();
+    computerSelection = computerPlay().toLowerCase();
+
+    const result = document.getElementById('result');
+
+    if((playerSelection == "rock" && computerSelection == "scissors") ||
+        (playerSelection == "paper" && computerSelection == "rock") ||
+        (playerSelection == "scissors" && computerSelection == "paper")) {
+        result.textContent = "You win! ";
+        playerScore++;
+        }
+    else if(playerSelection == computerSelection) {
+        result.textContent = "It's a tie! ";
+    }
+    else {
+        result.textContent =  "You lose! ";
+        computerScore++;
+    }
+
+    result.textContent += `Computer chose ${computerSelection}!`;
+    
+    updateScore();
+}
+
+function game() {
+    document.querySelectorAll('button').forEach((btn) => {
+        btn.disabled = false;
+        btn.addEventListener('click', function playListener(){
+            playRound(btn.id);
+        })
+    });
+
+    const resetBtn = document.getElementById('reset');
+    if (resetBtn) {
+        document.body.removeChild(resetBtn);
+    }
+}
+
+game();
